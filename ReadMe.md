@@ -244,7 +244,7 @@ not needed
 _Request Body_
 ```
 {
-  "name": <name> // optional
+  "name": <name> // optional (can be empty)
 }
 ```
 
@@ -267,7 +267,7 @@ _Response (400 - Validation Error)_
 ```
 {
   "status": "Validation Failed",
-  "message": "\"name\" is not allowed to be empty"
+  "message": "\"rename\" is not allowed"
 }
 ```
 

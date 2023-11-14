@@ -130,7 +130,7 @@ export const renamePokemon = async (req, res) => {
     const dataReq = req.body;
 
     const scheme = joi.object({
-      name: joi.string(),
+      name: joi.string().allow('', null),
     });
 
     const { error } = scheme.validate(dataReq);
