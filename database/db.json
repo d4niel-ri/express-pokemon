@@ -3,35 +3,40 @@
     {
       "name": "pikachu",
       "originalName": "pikachu",
-      "rename": 0,
+      "rename": "pikachu",
+      "renameCount": 0,
       "id_pokemon": 25,
       "id": 0
     },
     {
       "name": "bulbasaur",
       "originalName": "bulbasaur",
-      "rename": 0,
+      "rename": "bulbasaur",
+      "renameCount": 0,
       "id_pokemon": 1,
       "id": 1
     },
     {
       "name": "kakuna",
       "originalName": "kakuna",
-      "rename": 0,
+      "rename": "kakuna",
+      "renameCount": 0,
       "id_pokemon": 14,
       "id": 2
     },
     {
       "name": "rattata",
       "originalName": "rattata",
-      "rename": 0,
+      "rename": "rattata",
+      "renameCount": 0,
       "id_pokemon": 19,
       "id": 3
     },
     {
       "name": "meowth",
       "originalName": "meowth",
-      "rename": 0,
+      "rename": "meowth",
+      "renameCount": 0,
       "id_pokemon": 52,
       "id": 4
     }

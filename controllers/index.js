@@ -1,7 +1,9 @@
+import joi from "joi";
+
 import { callAPI, urls } from "../domain/api.js";
 import { loadData, storeData } from "../utils/database.js";
 import { handleServerError, handleClientError } from "../utils/handleError.js";
-import { canCatchPokemon, canReleasePokemon, getFibonacciSequence, orderData } from "../utils/utils.js";
+import { canCatchPokemon, canReleasePokemon, extractIDFromURL, extractNextEvolutionFromObject, getFibonacciSequence, orderData } from "../utils/utils.js";
 
 export const getAllPokemons = async (req, res) => {
   try {
@@ -56,7 +58,8 @@ export const catchPokemon = async (req, res) => {
       }
 
       const newCompleteData = {
-        name: response.name, originalName: response.name, rename: 0, id_pokemon: response.id, id: newLastID
+        id: newLastID, id_pokemon: response.id, name: response.name, originalName: response.name, 
+        rename: response.name, renameCount: 0,
       };
 
       data["myPokemons"].push(newCompleteData);
@@ -123,11 +126,34 @@ export const renamePokemon = async (req, res) => {
     if (!dataToBeChanged) {
       return handleClientError(res, 404, "Data Not Found");
     }
+
+    const dataReq = req.body;
+
+    const scheme = joi.object({
+      name: joi.string(),
+    });
+
+    const { error } = scheme.validate(dataReq);
+    if (error) {
+      return res.status(400).json({ status: 'Validation Failed', message: error.details[0].message })
+    }
+
+    const sequence = getFibonacciSequence(dataToBeChanged.renameCount);
     
-    const changedData = {
-      ...dataToBeChanged, 
-      name: `${dataToBeChanged.originalName}-${getFibonacciSequence(dataToBeChanged.rename)}`,
-      rename: dataToBeChanged.rename + 1
+    let changedData;
+    if (dataReq.name) {
+      changedData = {
+        ...dataToBeChanged,
+        rename: dataReq.name,
+        name: `${dataReq.name}-${sequence}`
+      };
+    } else {
+      changedData = {...dataToBeChanged, name: `${dataToBeChanged.rename}-${sequence}`};
+    }
+
+    changedData = {
+      ...changedData, 
+      renameCount: changedData.renameCount + 1
     };
 
     const filteredData = data["myPokemons"].filter((el) => el.id !== parsedID);
@@ -136,6 +162,37 @@ export const renamePokemon = async (req, res) => {
     data["myPokemons"] = newOrderedData;
     storeData(data);
     return res.status(200).json({ data: changedData, status: 'Success' });
+
+  } catch (error) {
+    console.error(error);
+    return handleServerError(res);
+  }
+}
+
+export const evolvePokemon = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const data = loadData();
+    const parsedID = parseInt(id, 10);
+    const dataToBeChanged = data["myPokemons"].find((el) => el.id === parsedID);
+    if (!dataToBeChanged) {
+      return handleClientError(res, 404, "Data Not Found");
+    }
+
+    const pokemonResponse = await callAPI(`${urls.pokemons}/${dataToBeChanged.id_pokemon}`, "GET");
+    const speciesName = pokemonResponse.species.name;
+    const speciesResponse = await callAPI(`${urls.pokemonSpecies}/${speciesName}`, "GET");
+    const evolutionChainURL = speciesResponse.evolution_chain.url;
+    const evolutionChainID = extractIDFromURL(evolutionChainURL);
+    const evolutionChainResponse = await callAPI(`${urls.evolutionChain}/${evolutionChainID}`, "GET");
+    const evolutionChainTemp = evolutionChainResponse.chain;
+    const nextEvolveSpecies = extractNextEvolutionFromObject(evolutionChainTemp, speciesName);
+    console.log(nextEvolveSpecies, "<< NEXT EVOLVE SPECIES");
+    const speciesResponse2 = await callAPI(`${urls.pokemonSpecies}/${nextEvolveSpecies}`, "GET");
+    console.log(speciesResponse2, "<< SPECIES RESPONSE 2");
+
+    return res.status(200).json({ status: 'Success' });
 
   } catch (error) {
     console.error(error);

@@ -4,6 +4,8 @@ const baseURL = 'https://pokeapi.co/api/v2';
 
 export const urls = {
   pokemons: 'pokemon',
+  pokemonSpecies: 'pokemon-species',
+  evolutionChain: 'evolution-chain',
 }
 
 export const callAPI = async (endpoint, method, headers, params, data) => {

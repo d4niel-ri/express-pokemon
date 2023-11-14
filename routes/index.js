@@ -1,5 +1,5 @@
 import express from "express";
-import { catchPokemon, getAllMyPokemons, getAllPokemons, getPokemonDetail, releasePokemon, renamePokemon } from "../controllers/index.js";
+import { catchPokemon, evolvePokemon, getAllMyPokemons, getAllPokemons, getPokemonDetail, releasePokemon, renamePokemon } from "../controllers/index.js";
 
 const router = express.Router();
 
@@ -9,5 +9,6 @@ router.get("/:param", getPokemonDetail);
 router.post("/catch/:param", catchPokemon);
 router.delete("/release/:id", releasePokemon);
 router.put("/rename/:id", renamePokemon);
+router.put("/evolve/:id", evolvePokemon);
 
 export default router;

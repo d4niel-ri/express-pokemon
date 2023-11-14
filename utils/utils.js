@@ -47,3 +47,33 @@ export const getFibonacciSequence = (n) => {
 
   return prev;
 }
+
+export const extractIDFromURL = (url) => {
+  // Match the last set of digits in the URL
+  const match = url.match(/\/(\d+)\/?$/);
+
+  // Check if there is a match
+  if (match && match[1]) {
+    // Convert the matched string to a number and return
+    return parseInt(match[1], 10);
+  } else {
+    // Return null or handle the case where no match is found
+    return null;
+  }
+}
+
+export const extractNextEvolutionFromObject = (evolutionChainTemp, name) => {
+  let evolutionChain = evolutionChainTemp;
+
+  while (true) {
+    if (evolutionChain.species.name === name) break;
+    evolutionChain = evolutionChain.evolves_to[0];
+  }
+
+  // Return null if no evolution after it
+  if (evolutionChain.evolves_to.length === 0) {
+    return null;
+  }
+
+  return evolutionChain.evolves_to[0].species.name;
+}

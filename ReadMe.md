@@ -129,7 +129,8 @@ _Response (201 - Success catch)_
     "id_pokemon": <id_pokemon>,
     "name": <name>,
     "originalName": <originalName>,
-    "rename": <rename>
+    "rename": <rename>,
+    "renameCount": <renameCount>
   },
   "status": "Success"
 }
@@ -240,6 +241,13 @@ _Request Header_
 not needed
 ```
 
+_Request Body_
+```
+{
+  "name": <name> // optional
+}
+```
+
 _Response (200)_
 ```
 {
@@ -248,13 +256,22 @@ _Response (200)_
     "id_pokemon": <id_pokemon>,
     "name": <name>,
     "originalName": <originalName>,
-    "rename": <rename>
+    "rename": <rename>,
+    "renameCount": <renameCount>,
   },
   "status": "Success"
 }
 ```
 
-_Response (404)_
+_Response (400 - Validation Error)_
+```
+{
+  "status": "Validation Failed",
+  "message": "\"name\" is not allowed to be empty"
+}
+```
+
+_Response (404 - Data Not Found)_
 ```
 {
   "message": "Data Not Found"
