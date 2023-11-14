@@ -279,3 +279,54 @@ _Response (404 - Data Not Found)_
 ```
 
 ---
+
+### PUT /pokemons/evolve/:id
+
+> Evolve a pokemon
+
+_Request Params_
+```
+/<id>
+```
+
+_Request Header_
+```
+not needed
+```
+
+_Request Body_
+```
+not needed
+```
+
+_(Response 200 - Can evolve)_
+```
+{
+  "data": {
+    "id": <id>,
+    "id_pokemon": <id_pokemon>,
+    "name": <name>,
+    "originalName": <originalName>,
+    "rename": <rename>,
+    "renameCount": <renameCount>,
+  },
+  "status": "Success"
+}
+```
+
+_(Response 200 - Can't evolve again)_
+```
+{
+  "message": "It can't evolve again",
+  "status": "Failed"
+}
+```
+
+_Response (404 - Data Not Found)_
+```
+{
+  "message": "Data Not Found"
+}
+```
+
+---

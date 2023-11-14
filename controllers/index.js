@@ -188,11 +188,26 @@ export const evolvePokemon = async (req, res) => {
     const evolutionChainResponse = await callAPI(`${urls.evolutionChain}/${evolutionChainID}`, "GET");
     const evolutionChainTemp = evolutionChainResponse.chain;
     const nextEvolveSpecies = extractNextEvolutionFromObject(evolutionChainTemp, speciesName);
-    console.log(nextEvolveSpecies, "<< NEXT EVOLVE SPECIES");
-    const speciesResponse2 = await callAPI(`${urls.pokemonSpecies}/${nextEvolveSpecies}`, "GET");
-    console.log(speciesResponse2, "<< SPECIES RESPONSE 2");
 
-    return res.status(200).json({ status: 'Success' });
+    if (!nextEvolveSpecies) {
+      return res.status(200).json({ message: `It can't evolve again`, status: 'Failed'});
+    }
+
+    const speciesResponse2 = await callAPI(`${urls.pokemonSpecies}/${nextEvolveSpecies}`, "GET");
+    const varietyName = speciesResponse2.varieties[0].pokemon.name;
+    console.log(varietyName, "<< VARIETY NAME");
+    const response = await callAPI(`${urls.pokemons}/${varietyName}`, "GET");
+    const changedData = {
+      ...dataToBeChanged, id_pokemon: response.id, name: response.name, originalName: response.name, 
+      rename: response.name, renameCount: 0, 
+    }
+
+    const filteredData = data["myPokemons"].filter((el) => el.id !== parsedID);
+    filteredData.push(changedData);
+    const newOrderedData = orderData(filteredData);
+    data["myPokemons"] = newOrderedData;
+    storeData(data);
+    return res.status(200).json({ data: changedData, status: 'Success' });
 
   } catch (error) {
     console.error(error);
